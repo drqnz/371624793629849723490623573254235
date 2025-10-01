@@ -16,6 +16,7 @@ local Tabs = {
 Misc = Window:AddTab({ Title = "Misc", Icon = "box" }),
 Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
+
 local Players          = game:GetService("Players")
 local StarterPlayer    = game:GetService("StarterPlayer")
 local StarterPlayerScripts = StarterPlayer:WaitForChild("StarterPlayerScripts")
@@ -26,6 +27,7 @@ local function destroyFlashbangGui()
         local gui = uiFolder:FindFirstChild("FlashbangGui")
         if gui then gui:Destroy() end
     end
+
     local localPlayer = Players.LocalPlayer
     if localPlayer then
         local playerScripts = localPlayer:FindFirstChild("PlayerScripts")
@@ -38,6 +40,7 @@ local function destroyFlashbangGui()
         end
     end
 end
+
 local FlashbangToggle = Tabs.Misc:AddToggle("RemoveFlashbang", {
     Title       = "Remove Flashbang Effect",
     Default     = false,
@@ -52,6 +55,7 @@ FlashbangToggle:OnChanged(function(isOn)
         print("[Flashbang] Toggle OFF – nothing to do")
     end
 end)
+
 local platformMap = {
     PC     = "MouseKeyboard",
     Mobile = "Touch",
@@ -66,6 +70,8 @@ local ControlDropdown = Tabs.Misc:AddDropdown("SetControls", {
     Multi       = false,
     Default     = 1, -- 1 = PC
 })
+
+
 local Replicated = game:GetService("ReplicatedStorage")
 local Remotes    = Replicated:WaitForChild("Remotes")
 local Replication = Remotes:WaitForChild("Replication")
@@ -75,6 +81,7 @@ local SetControls = Fighter:WaitForChild("SetControls")  -- RemoteEvent
 ControlDropdown:OnChanged(function(selected)
     local platformName = platformMap[selected]
     if platformName then
+        
         SetControls:FireServer(platformName)
 
         print("[Controls] Set platform to", platformName)
@@ -82,11 +89,25 @@ ControlDropdown:OnChanged(function(selected)
         warn("[Controls] Unknown selection:", selected)
     end
 end)
+
+-- Addons:
+-- SaveManager (Allows you to have a configuration system)
+-- InterfaceManager (Allows you to have a interface managment system)
+
+-- Hand the library over to our managers
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
-themes, do we?)
+
+-- Ignore keys that are used by ThemeManager.
+-- (we dont want configs to save themes, do we?)
 SaveManager:IgnoreThemeSettings()
+
+-- You can add indexes of elements the save manager should ignore
 SaveManager:SetIgnoreIndexes({})
+
+-- use case for doing it this way:
+-- a script hub could have themes in a global folder
+-- and game configs in a separate folder per game
 InterfaceManager:SetFolder("FluentScriptHub")
 SaveManager:SetFolder("FluentScriptHub/specific-game")
 
